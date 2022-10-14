@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mssqlOptions": {
+                "appName": "SQLTools",
+                "useUTC": true,
+                "encrypt": true
+            },
+            "previewLimit": 50,
+            "server": "linxdmshelpdev.database.windows.net",
+            "port": 1433,
+            "driver": "MSSQL",
+            "name": "LinxDMSHelpDev",
+            "database": "linxdmshelpDev",
+            "username": "linxdmsadmin",
+            "password": "ASDFqwer!@#$1234"
+        }
+    ]
+}
