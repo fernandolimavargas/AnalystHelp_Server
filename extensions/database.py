@@ -4,12 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 def init_app(app):
     parametros = (
-    "DRIVER={ODBC Driver 17 for SQL Server};"
-    "SERVER=linxdmshelpdev.database.windows.net;"
-    "PORT=1433;"
-    "DATABASE=linxdmshelpDev;"
-    "UID=linxdmsadmin;"
-    "PWD=ASDFqwer!@#$1234"
+        "DRIVER={ODBC Driver 17 for SQL Server};"
+        "SERVER=linxdmshelpdev.database.windows.net;"
+        "PORT=1433;"
+        "DATABASE=linxdmshelpDev;"
+        "UID=linxdmsadmin;"
+        "PWD=ASDFqwer!@#$1234"
     )
 
     url_db = parse.quote_plus(parametros)

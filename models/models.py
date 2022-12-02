@@ -3,74 +3,32 @@ from extensions.database import database
 from datetime import datetime
 
 
-
 class TIME(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     NOME = database.Column(database.String, nullable=False)
-    GESTOR_ID = database.Column(
-        database.Integer, database.ForeignKey('GESTOR.id'))
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
-    ANALISTAS = database.relationship('ANALISTA', backref='time')
+    GESTOR_ID = database.Column(database.Integer)
+    HELPER_ID = database.Column(database.Integer)
 
-
-class ANALISTA(database.Model):
-    id = database.Column(database.Integer, primary_key=True)
-    USUARIO = database.Column(database.String, nullable=False)
+class USUARIO(database.Model):
+    ID = database.Column(database.Integer, primary_key=True)
+    NOME = database.Column(database.String, nullable=False)
     EMAIL = database.Column(database.String, nullable=False)
     SENHA = database.Column(database.String, nullable=False)
-    TIPO = database.Column(database.String, default='A')
-    META = database.Column(database.Integer, nullable=False)
-    CARGO = database.Column(database.String, nullable=False)
-    TIME_ID = database.Column(database.Integer, database.ForeignKey('TIME.id'))
-    SOL_ERRO = database.relationship('SOL_ERRO', backref='requester')
-    SOL_ISSUE_INT = database.relationship('SOL_ISSUE_INT', backref='requester')
-    SOL_SERVICO = database.relationship('SOL_SERVICO', backref='requester')
-    SOL_TICKET = database.relationship('SOL_TICKET', backref='requester')
-    SOL_SCRIPT = database.relationship('SOL_SCRIPT', backref='requester')
-    SOL_IMPORT = database.relationship('SOL_IMPORT', backref='requester')
-    SOL_SHARE = database.relationship('SOL_SHARE', backref='requester')
-    SOL_ALTERACAO = database.relationship('SOL_ALTERACAO', backref='requester')
-    SOL_CUSTOMIZACAO = database.relationship('SOL_CUSTOMIZACAO', backref='requester')
-    HELP = database.relationship('HELP', backref='requester')
-
+    TIPO = database.Column(database.String, nullable=False)
+    META = database.Column(database.Integer)
+    CARGO = database.Column(database.Integer)
+    COMITE = database.Column(database.String, nullable=False)
+    INATIVO = database.Column(database.String, nullable=False)
+    TIME_ID = database.Column(database.Integer)
 
 class OCORRENCIA(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     ANALISTA_ID = database.Column(database.Integer, nullable=False)
-    OBSERVACAO = database.Column(database.Text, nullable=False)
     TIPO = database.Column(database.String, nullable=False)
-    DTA_INICIO = database.Column(database.Date)
-    DTA_FIM = database.Column(database.Date)
-
-
-class HELPER(database.Model):
-    id = database.Column(database.Integer, primary_key=True)
-    USUARIO = database.Column(database.String, nullable=False)
-    EMAIL = database.Column(database.String, nullable=False)
-    SENHA = database.Column(database.String, nullable=False)
-    TIPO = database.Column(database.String, default='H')
-    TIME = database.relationship('TIME', backref='HELP')
-    SOL_ERRO = database.relationship('SOL_ERRO', backref='finisher')
-    SOL_ISSUE_INT = database.relationship('SOL_ISSUE_INT', backref='finisher')
-    SOL_SERVICO = database.relationship('SOL_SERVICO', backref='finisher')
-    SOL_TICKET = database.relationship('SOL_TICKET', backref='finisher')
-    SOL_SCRIPT = database.relationship('SOL_SCRIPT', backref='finisher')
-    SOL_IMPORT = database.relationship('SOL_IMPORT', backref='finisher')
-    SOL_SHARE = database.relationship('SOL_SHARE', backref='finisher')
-    SOL_ALTERACAO = database.relationship('SOL_ALTERACAO', backref='finisher')
-    SOL_CUSTOMIZACAO = database.relationship('SOL_CUSTOMIZACAO', backref='finisher')
-    HELP = database.relationship('HELP', backref='finisher')
-
-
-class GESTOR(database.Model):
-    id = database.Column(database.Integer, primary_key=True)
-    USUARIO = database.Column(database.String, nullable=False)
-    EMAIL = database.Column(database.String, nullable=False)
-    SENHA = database.Column(database.String, nullable=False)
-    TIPO = database.Column(database.String, default='G')
-    TIME = database.relationship('TIME', backref='GESTAO')
-
+    TURNO = database.Column(database.String, nullable=False)
+    OBSERVACAO = database.Column(database.Text, nullable=False)
+    DTA_INICIO = database.Column(database.DateTime)
+    DTA_FIM = database.Column(database.DateTime)
 
 class SOL_ERRO(database.Model):
     id = database.Column(database.Integer, primary_key=True)
@@ -82,18 +40,19 @@ class SOL_ERRO(database.Model):
     FAZER = database.Column(database.Text, nullable=False)
     PALIATIVA = database.Column(database.Text, nullable=False, default='N/A')
     DOCS = database.Column(database.Text, nullable=False)
+    TIPO_DB = database.Column(database.String, nullable=False)
+    USER_DB = database.Column(database.String, nullable=False)
     BANCO = database.Column(database.String, nullable=False)
+    SERVER = database.Column(database.String, nullable=False)
     VERSAO = database.Column(database.String, nullable=False)
     VERSAO_ANT = database.Column(database.String, nullable=False)
+    OBS = database.Column(database.String, nullable=False)
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
-    DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
+    DTA_CREATE = database.Column(database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
 
 
@@ -112,12 +71,10 @@ class SOL_ISSUE_INT(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
 
 
@@ -130,13 +87,12 @@ class SOL_SERVICO(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
+
 
 class SOL_TICKET(database.Model):
     id = database.Column(database.Integer, primary_key=True)
@@ -151,12 +107,10 @@ class SOL_TICKET(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
 
 
@@ -170,12 +124,10 @@ class SOL_SCRIPT(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
 
 
@@ -192,12 +144,10 @@ class SOL_IMPORT(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
 
 
@@ -211,12 +161,10 @@ class SOL_SHARE(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
 
 
@@ -233,13 +181,12 @@ class SOL_ALTERACAO(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
+
 
 class SOL_CUSTOMIZACAO(database.Model):
     id = database.Column(database.Integer, primary_key=True)
@@ -254,13 +201,12 @@ class SOL_CUSTOMIZACAO(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
+
 
 class HELP(database.Model):
     id = database.Column(database.Integer, primary_key=True)
@@ -277,12 +223,10 @@ class HELP(database.Model):
     SOLUCAO = database.Column(database.Text)
     STATUS = database.Column(
         database.String, nullable=False, default='NÃO INICIADO')
-    ANALISTA_ID = database.Column(
-        database.Integer, database.ForeignKey('ANALISTA.id'), nullable=False)
-    HELPER_ID = database.Column(
-        database.Integer, database.ForeignKey('HELPER.id'))
+    ANALISTA_ID = database.Column(database.Integer, nullable=False)
+    HELPER_ID = database.Column(database.Integer, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
     DTA_CONCLUDED = database.Column(database.DateTime)
 
 
@@ -297,6 +241,7 @@ class BASES(database.Model):
     MARCA = database.Column(database.String, nullable=False)
     TAMANHO = database.Column(database.Integer, nullable=False)
     DTA_DMPBAK = database.Column(database.DateTime)
+    STATUS = database.Column(database.String)
 
 
 class MOV_SOL(database.Model):
@@ -310,11 +255,12 @@ class MOV_SOL(database.Model):
     RESUMO = database.Column(database.Text, nullable=False)
     STATUS = database.Column(database.Text, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
 
 
 class REQUEST_BUG(database.Model):
-    id = database.Column(database.Integer, primary_key=True, autoincrement=True)
+    id = database.Column(
+        database.Integer, primary_key=True, autoincrement=True)
     SOLICITANTE = database.Column(database.Integer, nullable=False)
     OQUE = database.Column(database.Text, nullable=False)
     COMO = database.Column(database.Text, nullable=False)
@@ -322,17 +268,19 @@ class REQUEST_BUG(database.Model):
     TIPO = database.Column(database.Text, nullable=False)
     STATUS = database.Column(database.Text, nullable=False)
     DTA_CREATE = database.Column(
-        database.DateTime, nullable=False, default=datetime.utcnow)
+        database.DateTime)
 
-class NOTIFICATIONS(database.Model):
-    id = database.Column(database.Integer, primary_key=True, autoincrement=True)
+
+class NOTIFICACAO(database.Model):
+    id = database.Column(
+        database.Integer, primary_key=True, autoincrement=True)
     TIPO = database.Column(database.String, nullable=False)
     SUBTIPO = database.Column(database.String, nullable=False)
     MENSAGEM = database.Column(database.Text, nullable=False)
-    ANALISTA = database.Column(database.Integer)
-    HELPER = database.Column(database.Integer)
+    USUARIO_ID = database.Column(database.Integer)
     STATUS = database.Column(database.Text, default='N')
-    DTA_CREATE = database.Column(database.DateTime, nullable=False, default=datetime.utcnow)
+    DTA_CREATE = database.Column(
+        database.DateTime)
 
 
 class CONTROLE_TPS_ANALISTAS(database.Model):

@@ -8,8 +8,7 @@ def init_app(app: Flask):
     def login():
         user = request.json['user']
         password = request.json['password']
-        remember = request.json['remember']
-        acess_token = auth_login(user, password, remember)
+        acess_token = auth_login(user, password)
 
         return acess_token
 

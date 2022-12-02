@@ -1,14 +1,7 @@
 from flask import Flask, request
 
 from controllers.auth_controller import valid_token
-from controllers.dashboard_controller import (
-    busca_inf_cards_sol,
-    busca_inf_filas_gerais,
-    busca_inf_filas,
-    busca_inf_bases,
-    busca_inf_filas_analitic,
-    request_bug_create
-)
+from controllers.dashboard_controller import *
 
 
 def init_app(app: Flask):
@@ -45,10 +38,10 @@ def init_app(app: Flask):
                 return busca_inf_filas_analitic(token_decode["id"], token_decode["tipo"])
             except TypeError:
                 return {"message": "O Workflow demorou mais do que o esperado para responder!",
-                "erro": ValueError}, 406
+                        "erro": ValueError}, 406
         else:
             return {"message": "Token de autenticação inválido."}, 401
-
+    
     @app.route("/AnalystQueuesInformation", methods=["GET"])
     def ana_queues_inf():
         if "Authorization" in request.headers:
@@ -57,20 +50,22 @@ def init_app(app: Flask):
             try:
                 return busca_inf_filas(token_decode["id"], token_decode["tipo"], token_decode["email"])
             except TypeError:
-                return {"message": "Ocorreu um erro na atualização da listagem de TPs!"}, 500
+                return {"message": "Ocorreu um erro na atualização da listagem de TPs!",
+                "error": ValueError}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
 
-    @app.route("/InformationBases", methods=["GET"])
-    def inf_bases():
+    @app.route("/AnalystQueuesInformationFooter", methods=["GET"])
+    def inf_filas_footer():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
-            valid_token(token)
+            token_decode = valid_token(token)
             try:
-                return busca_inf_bases()
+                return busca_inf_filas_footer(token_decode["id"], token_decode["tipo"])
             except TypeError:
-                return {"message": "Ocorreu um erro na atualização da listagem de bases!"}, 500
+                return {"message": "O Workflow demorou mais do que o esperado para responder!",
+                        "erro": ValueError}, 406
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
@@ -91,3 +86,30 @@ def init_app(app: Flask):
                 return {"message": "Ocorreu um erro na solicitação de correção/alteração!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
+
+    @app.route("/NotificationList", methods=["GET"])
+    def not_list():
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"]
+            token_decode = valid_token(token)
+            try:
+                result = notification_list(token_decode["id"])
+                return result
+            except TypeError:
+                return {"message": "Ocorreu um erro ao listar as notificações!"}, 500
+        else:
+            return {"message": "Token de autenticação inválido."}, 401
+
+    @app.route("/NotificationReading", methods=["PUT"])
+    def not_reading():
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"]
+            valid_token(token)
+            try:
+                notification_id = request.json["notificationId"]
+                result = notification_reading(notification_id)
+                return result 
+            except TypeError:
+                return {"message": "Ocorreu um erro ao ler a notificação!"}, 500
+        else:
+            return {"message": "Token de autenticação inválido"}

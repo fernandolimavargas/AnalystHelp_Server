@@ -3,34 +3,38 @@ from flask import render_template
 from flask_mail import Message
 from extensions.email import mail
 
-from models.models import GESTOR, HELPER, ANALISTA
+from models.models import USUARIO
 from extensions.bcrypt import bcrypt
 from extensions.database import database
 from random import choice
 import string
 
 
-def auth_login(user, password, remember):
+def auth_login(user, password):
     user = user + '@linx.com.br'
-    usuario = GESTOR.query.filter_by(EMAIL=user).first() or HELPER.query.filter_by(
-        EMAIL=user).first() or ANALISTA.query.filter_by(EMAIL=user).first()
+    usuario = USUARIO.query.filter_by(EMAIL=user).first()
+    
+    if usuario: 
+        if usuario.INATIVO == "S":
+            return {"message": "Usuário bloqueado!"}, 401
+            
+        if bcrypt.check_password_hash(usuario.SENHA, password):
+            payload = {
+                "id": usuario.ID,
+                "email": usuario.EMAIL,
+                "tipo": usuario.TIPO
+            }
 
+            token = jwt.encode(payload, 'secret', algorithm="HS256")
 
-    if usuario and bcrypt.check_password_hash(usuario.SENHA, password):
-        payload = {
-            "id": usuario.id,
-            "email": usuario.EMAIL,
-            "tipo": usuario.TIPO
-        }
+            result = {"id": usuario.ID, "name": usuario.NOME, "email": usuario.EMAIL,
+                    "tipo": usuario.TIPO, "token": token}
 
-        token = jwt.encode(payload, 'secret', algorithm="HS256")
-
-        result = {"id": usuario.id, "name": usuario.USUARIO, "email": usuario.EMAIL,
-                  "tipo": usuario.TIPO, "token": token}
-
-        return result
+            return result
+        else:
+            return {"message": "Senha incorreta!"}, 401
     else:
-        return {"message": "Usuário e/ou senha não encontrados!"}, 401
+        return {"message": "Usuário não encontrado!"}, 401
 
 
 def valid_token(token=None):
@@ -43,9 +47,7 @@ def valid_token(token=None):
 
 
 def send_email_recovery(email):
-    usuario = (GESTOR.query.filter_by(EMAIL=email).first()
-               or HELPER.query.filter_by(EMAIL=email).first()
-               or ANALISTA.query.filter_by(EMAIL=email).first())
+    usuario = (USUARIO.query.filter_by(EMAIL=email).first())
 
     if usuario:
         msg = Message('Recuperação de senha',
@@ -59,9 +61,7 @@ def send_email_recovery(email):
 
 
 def password_recovery_email(email):
-    usuario = (GESTOR.query.filter_by(EMAIL=email).first()
-               or HELPER.query.filter_by(EMAIL=email).first()
-               or ANALISTA.query.filter_by(EMAIL=email).first())
+    usuario = (USUARIO.query.filter_by(EMAIL=email).first())
 
     if usuario:
         tamanho = 12
@@ -87,13 +87,11 @@ def password_recovery_email(email):
 
 
 def send_email_access(email):
-    usuario = (GESTOR.query.filter_by(EMAIL=email).first()
-               or HELPER.query.filter_by(EMAIL=email).first()
-               or ANALISTA.query.filter_by(EMAIL=email).first())
+    usuario = (USUARIO.query.filter_by(EMAIL=email).first())
 
     if usuario:
         return {"message": "O e-mail informado ja tem acesso, solicite o reset de senha!"}, 401
-    
+
     if email.split('@')[1] != 'linx.com.br':
         return {"message": "O e-mail informado não pertente a linx!"}, 401
 

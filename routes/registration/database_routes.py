@@ -3,6 +3,7 @@ from flask import Flask, request
 from controllers.auth_controller import valid_token
 from controllers.registration.database_controller import *
 
+
 def init_app(app: Flask):
     @app.route("/DatabaseRegistration", methods=["POST"])
     def database_register():
@@ -19,20 +20,20 @@ def init_app(app: Flask):
                 brands = request.json["brands"]
                 size = request.json["size"]
                 dta_dmpbak = request.json["dtaDmpBak"]
-                result = registration_database(client, 
-                    charset, 
-                    server, 
-                    structure, 
-                    instance,
-                    db_user,
-                    brands,
-                    size,
-                    dta_dmpbak,
-                    token_decode["tipo"])
+                result = registration_database(client,
+                                               charset,
+                                               server,
+                                               structure,
+                                               instance,
+                                               db_user,
+                                               brands,
+                                               size,
+                                               dta_dmpbak,
+                                               token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao cadastrar o banco!"}, 500
-        else: 
+        else:
             return {"message": "Token de autenticação inválido."}, 401
 
     @app.route("/DatabaseEdit", methods=["PUT"])
@@ -52,20 +53,20 @@ def init_app(app: Flask):
                 size = request.json["size"]
                 dta_dmpbak = request.json["dtaDmpBak"]
                 result = edit_database(db_id,
-                    client, 
-                    charset, 
-                    server, 
-                    structure, 
-                    instance,
-                    db_user,
-                    brands,
-                    size,
-                    dta_dmpbak,
-                    token_decode["tipo"])
+                                       client,
+                                       charset,
+                                       server,
+                                       structure,
+                                       instance,
+                                       db_user,
+                                       brands,
+                                       size,
+                                       dta_dmpbak,
+                                       token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao alterar o banco!"}, 500
-        else: 
+        else:
             return {"message": "Token de autenticação inválido."}, 401
 
     @app.route("/DatabaseDelete", methods=["DELETE"])
@@ -79,9 +80,8 @@ def init_app(app: Flask):
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao listar os bancos!"}, 500
-        else: 
+        else:
             return {"message": "Token de autenticação inválido."}, 401
-
 
     @app.route("/DatabaseList", methods=["GET"])
     def database_list():
@@ -93,5 +93,5 @@ def init_app(app: Flask):
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao listar os bancos!"}, 500
-        else: 
+        else:
             return {"message": "Token de autenticação inválido."}, 401

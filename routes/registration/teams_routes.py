@@ -3,6 +3,7 @@ from flask import Flask, request
 from controllers.auth_controller import valid_token
 from controllers.registration.team_controller import *
 
+
 def init_app(app: Flask):
     @app.route("/TeamsRegistration", methods=["POST"])
     def team_register():
@@ -13,11 +14,12 @@ def init_app(app: Flask):
                 name = request.json["name"]
                 helper_id = request.json["helperID"]
                 manager_id = request.json["managerID"]
-                result = registration_team(name, helper_id, manager_id, token_decode["tipo"])
+                result = registration_team(
+                    name, helper_id, manager_id, token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao cadastrar o time!"}, 500
-        else: 
+        else:
             return {"message": "Token de autenticação inválido."}, 401
 
     @app.route("/TeamsEdit", methods=["PUT"])
@@ -30,11 +32,12 @@ def init_app(app: Flask):
                 name = request.json["name"]
                 helper_id = request.json["helperID"]
                 manager_id = request.json["managerID"]
-                result = edit_team(team_id, name, helper_id, manager_id, token_decode["tipo"])
+                result = edit_team(team_id, name, helper_id,
+                                   manager_id, token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao alterar o time!"}, 500
-        else: 
+        else:
             return {"message": "Token de autenticação inválido."}, 401
 
     @app.route("/TeamsDelete", methods=["DELETE"])
@@ -48,9 +51,8 @@ def init_app(app: Flask):
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao listar os times!"}, 500
-        else: 
+        else:
             return {"message": "Token de autenticação inválido."}, 401
-
 
     @app.route("/TeamsList", methods=["GET"])
     def team_list():
@@ -62,5 +64,5 @@ def init_app(app: Flask):
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao listar os times!"}, 500
-        else: 
+        else:
             return {"message": "Token de autenticação inválido."}, 401

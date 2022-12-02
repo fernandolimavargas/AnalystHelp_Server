@@ -1,12 +1,12 @@
 from flask import Flask, request
 
 from controllers.auth_controller import valid_token
-from controllers.requests.alteration_request_controller import *
+from controllers.requests.customization_request_controller import *
 
 
 def init_app(app: Flask):
-    @app.route("/ReqAlteration", methods=["POST"])
-    def req_alteration():
+    @app.route("/ReqCustomization", methods=["POST"])
+    def req_customization():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
@@ -19,7 +19,7 @@ def init_app(app: Flask):
                 version = request.json["version"]
                 docs = request.json["docs"]
                 duplicate = request.json["duplicate"]
-                result = request_alteration(nro_tp, 
+                result = request_customization(nro_tp, 
                                             making, 
                                             make, 
                                             how, 
@@ -34,29 +34,29 @@ def init_app(app: Flask):
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationStart", methods=["POST"])
-    def req_alteration_start():
+    @app.route("/ReqCustomizationStart", methods=["POST"])
+    def req_customization_start():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
-                result = request_alteration_start(id_alteration, token_decode["id"], token_decode["tipo"])
+                id_customization = request.json["idRequest"]
+                result = request_customization_start(id_customization, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao iniciar a analise!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationInf", methods=["POST"])
-    def req_alteration_inf():
+    @app.route("/ReqCustomizationInf", methods=["POST"])
+    def req_customization_inf():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 message = request.json["message"]
-                result = request_alteration_information(id_alteration, 
+                result = request_customization_information(id_customization, 
                                                         message, 
                                                         token_decode["id"], 
                                                         token_decode["tipo"])
@@ -66,13 +66,13 @@ def init_app(app: Flask):
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationInfRes", methods=["POST"])
-    def req_alteration_inf_res():
+    @app.route("/ReqCustomizationInfRes", methods=["POST"])
+    def req_customization_inf_res():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 nro_tp = request.json["nroTp"]
                 making = request.json["making"]
                 make = request.json["make"]
@@ -81,7 +81,7 @@ def init_app(app: Flask):
                 version = request.json["version"]
                 docs = request.json["docs"]
                 message = request.json["message"]
-                result = request_alteration_information_response(id_alteration,
+                result = request_customization_information_response(id_customization,
                                                                 nro_tp,
                                                                 making,
                                                                 make,
@@ -94,122 +94,122 @@ def init_app(app: Flask):
                                                                 token_decode["tipo"])
                 return result
             except TypeError:
-                return {"message": "Ocorreu um erro ao responder a solicitação de informação1!"}, 500
+                return {"message": "Ocorreu um erro ao responder a solicitação de informação!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationHelperAproved", methods=["POST"])
-    def req_alteration_helper_aproved():
+    @app.route("/ReqCustomizationHelperAproved", methods=["POST"])
+    def req_customization_helper_aproved():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 message = request.json["message"]
-                result = request_alteration_aproved(id_alteration, message, token_decode["id"], token_decode["tipo"])
+                result = request_customization_aproved(id_customization, message, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao enviar para análise comitê!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationCommitteeAproved", methods=["POST"])
-    def req_alteration_committee_aproved():
+    @app.route("/ReqCustomizationCommitteeAproved", methods=["POST"])
+    def req_customization_committee_aproved():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 message = request.json["message"]
-                result = request_alteration_committee_aproved(id_alteration, message, token_decode["id"], token_decode["tipo"])
+                result = request_customization_committee_aproved(id_customization, message, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao aprovar a analise!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationMark", methods=["POST"])
-    def req_alteration_mark():
+    @app.route("/ReqCustomizationMark", methods=["POST"])
+    def req_customization_mark():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 issue = request.json["issue"]
-                result = request_alteration_mark(id_alteration, issue, token_decode["id"], token_decode["tipo"])
+                result = request_customization_mark(id_customization, issue, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao solicitar o rótulo!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationFinished", methods=["POST"])
-    def req_alteration_finished():
+    @app.route("/ReqCustomizationFinished", methods=["POST"])
+    def req_customization_finished():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 message = request.json["message"]
-                result = request_alteration_finished(id_alteration, message, token_decode["id"], token_decode["tipo"])
+                result = request_customization_finished(id_customization, message, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao finalizar a solicitação!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationHelperRecused", methods=["POST"])
-    def req_alteration_helper_recused():
+    @app.route("/ReqCustomizationHelperRecused", methods=["POST"])
+    def req_customization_helper_recused():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 message = request.json["message"]
-                result = request_alteration_recused(id_alteration, message, token_decode["id"], token_decode["tipo"])
+                result = request_customization_recused(id_customization, message, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao recusar a solicitação!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationCommitteeRecused", methods=["POST"])
-    def req_alteration_committee_recused():
+    @app.route("/ReqCustomizationCommitteeRecused", methods=["POST"])
+    def req_customization_committee_recused():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 message = request.json["message"]
-                result = request_alteration_committee_recused(id_alteration, message, token_decode["id"], token_decode["tipo"])
+                result = request_customization_committee_recused(id_customization, message, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao recusar a solicitação!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationRefer", methods=["POST"])
-    def req_alteration_refer():
+    @app.route("/ReqCustomizationRefer", methods=["POST"])
+    def req_customization_refer():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 helper_to_forward = request.json["helperToForward"]
-                result = request_alteration_refer(id_alteration, helper_to_forward, token_decode["id"], token_decode["tipo"])
+                result = request_customization_refer(id_customization, helper_to_forward, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao encaminhar a solicitação!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationEdit", methods=["POST"])
-    def req_alteration_edit():
+    @app.route("/ReqCustomizationEdit", methods=["POST"])
+    def req_customization_edit():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                id_alteration = request.json["idRequest"]
+                id_customization = request.json["idRequest"]
                 nro_tp = request.json["nroTp"]
                 making = request.json["making"]
                 make = request.json["make"]
@@ -217,7 +217,7 @@ def init_app(app: Flask):
                 benefit = request.json["benefit"]
                 version = request.json["version"]
                 docs = request.json["docs"]
-                result = request_alteration_edit(id_alteration,
+                result = request_customization_edit(id_customization,
                                                 nro_tp,
                                                 making,
                                                 make,
@@ -233,27 +233,27 @@ def init_app(app: Flask):
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationList", methods=["GET"])
-    def req_alteration_list():
+    @app.route("/ReqCustomizationList", methods=["GET"])
+    def req_customization_list():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             token_decode = valid_token(token)
             try:
-                alteration_id = request.headers["idRequest"]
-                result = request_alteration_list(alteration_id, token_decode["id"], token_decode["tipo"])
+                customization_id = request.headers["idRequest"]
+                result = request_customization_list(customization_id, token_decode["id"], token_decode["tipo"])
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao listar as solicitações!"}, 500
         else:
             return {"message": "Token de autenticação inválido."}, 401
 
-    @app.route("/ReqAlterationListAll", methods=["GET"])
-    def req_alteration_list_all():
+    @app.route("/ReqCustomizationListAll", methods=["GET"])
+    def req_customization_list_all():
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
             valid_token(token)
             try:
-                result = request_alteration_list_all()
+                result = request_customization_list_all()
                 return result
             except TypeError:
                 return {"message": "Ocorreu um erro ao listar as solicitações!"}, 500
